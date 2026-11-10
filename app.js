@@ -215,6 +215,7 @@ app.get('/grupos', verificarAutenticacao, async (req, res) => {
             grupos: resultado.rows,
             usuario: req.session.usuario,
             erro: req.query.erro || null,
+            mensagem: req.query.mensagem || null,
         });
     } catch (err) {
         console.error(err);
@@ -227,10 +228,66 @@ app.post('/grupos/novo', verificarAutenticacao, async (req, res) => {
     if (!nome) return res.redirect('/grupos?erro=Informe+o+nome+do+grupo');
     try {
         await pool.query('INSERT INTO grupos (nome_grupo) VALUES ($1)', [nome]);
-        res.redirect('/grupos');
+        res.redirect('/grupos?mensagem=Grupo+cadastrado+com+sucesso');
     } catch (err) {
         console.error(err);
-        res.status(500).send('Erro ao cadastrar grupo.');
+        const erro =
+            err.code === '23505'
+                ? 'Já existe um grupo com esse nome.'
+                : 'Não foi possível cadastrar o grupo.';
+        res.redirect(`/grupos?erro=${encodeURIComponent(erro)}`);
+    }
+});
+
+app.get('/grupos/editar/:id', verificarAutenticacao, async (req, res) => {
+    try {
+        const { rows } = await pool.query(
+            'SELECT id, nome_grupo FROM grupos WHERE id = $1',
+            [req.params.id]
+        );
+        if (!rows.length) return res.status(404).send('Grupo não encontrado.');
+        res.render('editar-grupos', {
+            grupo: rows[0],
+            usuario: req.session.usuario,
+            erro: null,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao carregar os dados do grupo.');
+    }
+});
+
+app.post('/grupos/editar/:id', verificarAutenticacao, async (req, res) => {
+    const nome = String(req.body.nome_grupo || '').trim();
+    const grupo = { id: req.params.id, nome_grupo: nome };
+
+    if (!nome) {
+        return res.status(400).render('editar-grupos', {
+            grupo,
+            usuario: req.session.usuario,
+            erro: 'Informe o nome do grupo.',
+        });
+    }
+
+    try {
+        const resultado = await pool.query(
+            'UPDATE grupos SET nome_grupo = $1 WHERE id = $2',
+            [nome, req.params.id]
+        );
+        if (!resultado.rowCount)
+            return res.status(404).send('Grupo não encontrado.');
+        res.redirect('/grupos?mensagem=Grupo+atualizado+com+sucesso');
+    } catch (err) {
+        console.error(err);
+        const erro =
+            err.code === '23505'
+                ? 'Já existe um grupo com esse nome.'
+                : 'Não foi possível atualizar o grupo.';
+        res.status(400).render('editar-grupos', {
+            grupo,
+            usuario: req.session.usuario,
+            erro,
+        });
     }
 });
 

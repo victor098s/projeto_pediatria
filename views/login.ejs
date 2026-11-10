@@ -25,6 +25,11 @@
                 color: #333;
                 text-align: center;
             }
+            .login-help {
+                text-align: center;
+                color: #666;
+                margin-top: -8px;
+            }
             .form-group {
                 margin-bottom: 15px;
             }
@@ -68,9 +73,7 @@
     <body>
         <div class="card">
             <h2>Acesso ao Sistema</h2>
-            <p style="text-align: center; color: #666; margin-top: -8px">
-                Entre com o CPF e a senha do cliente.
-            </p>
+            <p class="login-help">Entre com o CPF e a senha do cliente.</p>
 
             <!-- BLOCO EJS: Renderização condicional da mensagem de erro transmitida pelo Express -->
             <% if (erro) { %>

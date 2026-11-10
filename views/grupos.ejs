@@ -112,6 +112,14 @@
                 border-radius: 8px;
                 margin-bottom: 16px;
             }
+            .success {
+                background: #eaf7ef;
+                border: 1px solid #bfe4cc;
+                color: #216a3a;
+                padding: 12px;
+                border-radius: 8px;
+                margin-bottom: 16px;
+            }
             .table-wrap {
                 overflow: auto;
             }
@@ -150,6 +158,15 @@
             .danger:hover {
                 background: #fff0f0;
             }
+            .actions {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 12px;
+            }
+            .actions form {
+                margin: 0;
+            }
             .empty {
                 text-align: center;
                 color: #728197;
@@ -181,6 +198,9 @@
             </div>
             <% if (erro) { %>
             <div class="alert"><%= erro.replaceAll('+', ' ') %></div>
+            <% } %>
+            <% if (mensagem) { %>
+            <div class="success"><%= mensagem.replaceAll('+', ' ') %></div>
             <% } %>
             <section class="panel">
                 <h2>Novo grupo</h2>
@@ -224,7 +244,10 @@
                                         clientes</span
                                     >
                                 </td>
-                                <td>
+                                <td class="actions">
+                                    <a href="/grupos/editar/<%= grupo.id %>"
+                                        >Editar</a
+                                    >
                                     <% if (Number(grupo.total_clientes) === 0) { %>
                                     <form
                                         action="/grupos/deletar/<%= grupo.id %>"

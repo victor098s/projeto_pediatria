@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Editar grupo | Pediatria</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                background: #f4f7fb;
+                color: #192b43;
+                font:
+                    15px Arial,
+                    sans-serif;
+            }
+            header {
+                background: #fff;
+                border-bottom: 1px solid #e4eaf1;
+                padding: 16px max(calc((100% - 760px) / 2), 24px);
+                display: flex;
+                justify-content: space-between;
+            }
+            .brand {
+                font-weight: 700;
+                color: #175c72;
+            }
+            a {
+                color: #24677d;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            .wrap {
+                max-width: 760px;
+                margin: 40px auto;
+                padding: 0 24px;
+            }
+            h1 {
+                margin: 0 0 8px;
+            }
+            .muted {
+                color: #728197;
+            }
+            .panel {
+                background: #fff;
+                border: 1px solid #e5eaf0;
+                border-radius: 12px;
+                padding: 26px;
+            }
+            label {
+                display: block;
+                font-weight: 600;
+            }
+            .field {
+                width: 100%;
+                padding: 11px 12px;
+                border: 1px solid #d5dee8;
+                border-radius: 7px;
+                font-size: 15px;
+                margin-top: 7px;
+            }
+            .actions {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 14px;
+                margin-top: 24px;
+            }
+            button {
+                border: 0;
+                border-radius: 7px;
+                background: #147a83;
+                color: #fff;
+                padding: 11px 16px;
+                cursor: pointer;
+                font-weight: 600;
+            }
+            button:hover {
+                background: #10656d;
+            }
+            .alert {
+                background: #fff3e8;
+                border: 1px solid #ffd8b3;
+                color: #8c4d13;
+                padding: 12px;
+                border-radius: 8px;
+                margin-bottom: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="brand">Pediatria · Gestão de clientes</div>
+            <a href="/grupos">← Voltar aos grupos</a>
+        </header>
+        <main class="wrap">
+            <h1>Editar grupo</h1>
+            <p class="muted">Atualize o nome do grupo de atendimento.</p>
+            <% if (erro) { %>
+            <div class="alert"><%= erro %></div>
+            <% } %>
+            <form
+                class="panel"
+                action="/grupos/editar/<%= grupo.id %>"
+                method="post"
+            >
+                <label>
+                    Nome do grupo
+                    <input
+                        class="field"
+                        type="text"
+                        name="nome_grupo"
+                        maxlength="120"
+                        value="<%= grupo.nome_grupo %>"
+                        required
+                        autofocus
+                    />
+                </label>
+                <div class="actions">
+                    <a href="/grupos">Cancelar</a>
+                    <button type="submit">Salvar alterações</button>
+                </div>
+            </form>
+        </main>
+    </body>
+</html>
