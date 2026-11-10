@@ -292,20 +292,29 @@ app.post('/grupos/editar/:id', verificarAutenticacao, async (req, res) => {
 });
 
 app.post('/grupos/deletar/:id', verificarAutenticacao, async (req, res) => {
+    const client = await pool.connect();
     try {
-        const uso = await pool.query(
-            'SELECT 1 FROM clientes WHERE grupo_id = $1 LIMIT 1',
+        await client.query('BEGIN');
+        await client.query(
+            'UPDATE clientes SET grupo_id = NULL WHERE grupo_id = $1',
             [req.params.id]
         );
-        if (uso.rowCount)
-            return res.redirect(
-                '/grupos?erro=Transfira+os+clientes+antes+de+excluir+este+grupo'
-            );
-        await pool.query('DELETE FROM grupos WHERE id = $1', [req.params.id]);
-        res.redirect('/grupos');
+        const resultado = await client.query(
+            'DELETE FROM grupos WHERE id = $1',
+            [req.params.id]
+        );
+        await client.query('COMMIT');
+
+        if (!resultado.rowCount) {
+            return res.redirect('/grupos?erro=Grupo+n%C3%A3o+encontrado');
+        }
+        res.redirect('/grupos?mensagem=Grupo+exclu%C3%ADdo+com+sucesso');
     } catch (err) {
+        await client.query('ROLLBACK');
         console.error(err);
         res.status(500).send('Erro ao excluir grupo.');
+    } finally {
+        client.release();
     }
 });
 

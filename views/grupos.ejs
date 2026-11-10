@@ -248,13 +248,12 @@
                                     <a href="/grupos/editar/<%= grupo.id %>"
                                         >Editar</a
                                     >
-                                    <% if (Number(grupo.total_clientes) === 0) { %>
                                     <form
                                         action="/grupos/deletar/<%= grupo.id %>"
                                         method="post"
                                         onsubmit="
                                             return confirm(
-                                                'Excluir este grupo?'
+                                                'Excluir este grupo? Os clientes permanecerão cadastrados, mas ficarão sem grupo.'
                                             );
                                         "
                                     >
@@ -262,7 +261,6 @@
                                             Excluir
                                         </button>
                                     </form>
-                                    <% } %>
                                 </td>
                             </tr>
                             <% }) %>
